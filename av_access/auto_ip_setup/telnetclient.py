@@ -2,42 +2,63 @@ import asyncio
 import telnetlib3
 import sys
 
+PASSWORD = "root"
+BUF_SIZE =  4096
 
 def get_new_ip_address():
     return sys.argv[2] 
 
 async def shell(reader,writer):
 
-    outp = await reader.read(1024)
+    outp = await reader.read(BUF_SIZE)
     print("Not Av Access sent: ", repr(outp))
 
-    writer.write("root\r\n")
+    writer.write(f"{PASSWORD}\r\n")
     await writer.drain()
-    print("Client sent: root")
+    print(f"Client sent: {PASSWORD}")
 
-    response = await reader.read(1024)
+    response = await reader.read(BUF_SIZE)
     print("Server replied: ", repr(response))
+    outp = await reader.read(BUF_SIZE)
+    print("Not Av Access sent: ", repr(outp))
 
-    writer.write("/ # gbparam s ip_mode \"static\"\r\n")
+    writer.write("gbparam s ip_mode \"static\"\r\n")
     await writer.drain()
-    print("Client sent: / # gbparam s ip_mode \"static\"\r\n")
+    print("\nClient sent: gbparam s ip_mode \"static\"\r\n")
 
-    response = await reader.read(1024)
+    response = await reader.read(BUF_SIZE)
     print("Server replied: ", repr(response))
+    outp = await reader.read(BUF_SIZE)
+    print("Not Av Access sent: ", repr(outp))
 
-    writer.write(f"/ # gbparam s ipaddr {get_new_ip_address()}\r\n")
+    writer.write(f"gbparam s ipaddr {get_new_ip_address()}\r\n")
     await writer.drain()
-    print(f"Client sent: / # gbparam s {get_new_ip_address()}\"\r\n")
+    print(f"\nClient sent: gbparam s ipaddr {get_new_ip_address()}\"\r\n")
 
-    response = await reader.read(1024)
+    response = await reader.read(BUF_SIZE)
     print("Server replied: ", repr(response))
+    outp = await reader.read(BUF_SIZE)
+    print("Not Av Access sent: ", repr(outp))
 
-    writer.write("/ # gbparam s netmask 255.255.255.0\r\n")
+    writer.write("gbparam s netmask 255.255.255.0\r\n")
     await writer.drain()
-    print("Client sent: / # gbparam s netmask 255.255.255.0\"\r\n")
+    print("\nClient sent: gbparam s netmask 255.255.255.0\"\r\n")
 
-    response = await reader.read(1024)
+    response = await reader.read(BUF_SIZE)
     print("Server replied: ", repr(response))
+    outp = await reader.read(BUF_SIZE)
+    print("Not Av Access sent: ", repr(outp))
+
+    writer.write("reboot\r\n")
+    await writer.drain()
+    print("\nClient sent: reboot\"\r\n")
+
+    response = await reader.read(BUF_SIZE)
+    print("Server replied: ", repr(response))
+    outp = await reader.read(BUF_SIZE)
+    print("Not Av Access sent: ", repr(outp))
+
+
     writer.close()
     try:
         await writer.wait.closed()
